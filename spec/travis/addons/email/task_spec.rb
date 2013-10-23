@@ -16,6 +16,7 @@ describe Travis::Addons::Email::Task do
     @recipients = ['svenfuchs@artweb-design.de']
     mailer.stubs(:finished_email).returns(email)
     Broadcast.stubs(:by_repo).returns(broadcasts)
+    Travis::Mailer.stubs(:setup?).returns(true)
   end
 
   it 'creates an email for the build email recipients' do

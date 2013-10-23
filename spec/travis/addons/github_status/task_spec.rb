@@ -10,7 +10,7 @@ describe Travis::Addons::GithubStatus::Task do
   let(:io)         { StringIO.new }
 
   before do
-    Travis.logger = Logger.new(io)
+    Travis.logger = Travis::Logger.new(io)
   end
 
   def run
