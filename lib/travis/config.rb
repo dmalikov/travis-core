@@ -100,6 +100,7 @@ module Travis
             :async         => {},
             :notifications => [], # TODO rename to event.handlers
             :metrics       => { :reporter => 'logger' },
+            :logger        => { :thread_id => true },
             :queues        => [],
             :default_queue => 'builds.linux',
             :workers       => { :ttl => 60, :prune => { :interval => 5 } },
