@@ -10,6 +10,7 @@ describe Travis::Api::V2::Http::Repositories do
       'id' => repository.id,
       'slug' => 'svenfuchs/minimal',
       'description' => 'the repo description',
+      'private' => false,
       'last_build_id' => 1,
       'last_build_number' => 2,
       'last_build_started_at' => json_format_time(Time.now.utc - 1.minute),
