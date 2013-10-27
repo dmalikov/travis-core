@@ -10,6 +10,7 @@ describe Travis::Api::V0::Pusher::Job::Log do
       'id' => test.id,
       'build_id' => test.source_id,
       'repository_id' => test.repository_id,
+      'repository_private' => false,
       '_log' => 'some chars',
       'number' => 1,
       'final' => false

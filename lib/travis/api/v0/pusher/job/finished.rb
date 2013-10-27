@@ -12,6 +12,7 @@ module Travis
                 'build_id' => job.source_id,
                 'repository_id' => job.repository_id,
                 'repository_slug' => job.repository.slug,
+                'repository_private' => repository.private,
                 'state' => job.state.to_s,
                 'result' => legacy_job_result(job),
                 'finished_at' => format_date(job.finished_at)

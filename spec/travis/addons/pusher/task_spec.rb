@@ -13,7 +13,7 @@ describe Travis::Addons::Pusher::Task do
   end
 
   def run(event, object, options = {})
-    type = event =~ /^worker:/ ? 'worker' : event.sub('test:', '').sub(':', '/')
+    type = event.sub('test:', '').sub(':', '/')
     payload = Travis::Api.data(object, for: 'pusher', type: type, params: options[:params])
     subject.new(payload, event: event).run
   end
@@ -97,11 +97,6 @@ describe Travis::Addons::Pusher::Task do
       run('build:finished', build)
       channel.should have_message('build:finished', build)
     end
-
-    it 'worker:started' do
-      run('worker:started', worker)
-      channel.should have_message('worker:started', worker)
-    end
   end
 
   describe 'channels' do
@@ -139,12 +134,6 @@ describe Travis::Addons::Pusher::Task do
       payload = Travis::Api.data(build, for: 'pusher', type: 'build/finished')
       handler = subject.new(payload, event: 'build:finished')
       handler.send(:channels).should include('common')
-    end
-
-    it 'returns "workers" for the event "worker:started"' do
-      payload = Travis::Api.data(worker, for: 'pusher', type: 'worker')
-      handler = subject.new(payload, event: 'worker:created')
-      handler.send(:channels).should include('workers')
     end
   end
 end

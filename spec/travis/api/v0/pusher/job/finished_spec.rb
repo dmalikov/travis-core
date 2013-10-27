@@ -11,6 +11,7 @@ describe Travis::Api::V0::Pusher::Job::Finished do
       'build_id' => test.source_id,
       'repository_id' => test.repository_id,
       'repository_slug' => 'svenfuchs/minimal',
+      'repository_private' => false,
       'state' => 'passed',
       'result' => 0,
       'finished_at' => json_format_time(Time.now.utc)

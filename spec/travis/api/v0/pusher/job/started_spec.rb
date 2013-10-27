@@ -21,6 +21,7 @@ describe Travis::Api::V0::Pusher::Job::Started do
       'build_id' => 1,
       'repository_id' => 1,
       'repository_slug' => 'svenfuchs/minimal',
+      'repository_private' => false,
       'number' => '2.1',
       'state' => 'started',
       'result' => nil,

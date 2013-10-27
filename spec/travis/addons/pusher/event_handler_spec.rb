@@ -45,11 +45,6 @@ describe Travis::Addons::Pusher::EventHandler do
       subject.expects(:notify)
       Travis::Event.dispatch('build:finished', build)
     end
-
-    it 'worker:added' do
-      subject.expects(:notify)
-      Travis::Event.dispatch('worker:added', worker)
-    end
   end
 
   # describe 'instrumentation' do

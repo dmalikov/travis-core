@@ -17,6 +17,10 @@ module Travis
             @job = job
             @options = options
           end
+
+          def repository
+            job.repository
+          end
         end
       end
     end

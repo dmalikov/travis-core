@@ -9,9 +9,7 @@ module Travis
             end
 
             def build_data
-              super.
-                reject { |key, value| key == 'config' }.
-                merge({ 'duration' => build.duration })
+              super.reject { |key, value| key == 'config' }.merge({ 'duration' => build.duration })
             end
           end
         end
