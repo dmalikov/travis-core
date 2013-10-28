@@ -25,7 +25,6 @@ module Travis
                 'id' => repository.id,
                 'slug' => repository.slug,
                 'description' => repository.description,
-                'private' => repository.private?,
                 'last_build_id' => repository.last_build_id,
                 'last_build_number' => repository.last_build_number,
                 'last_build_state' => repository.last_build_state.to_s,
