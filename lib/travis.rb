@@ -80,6 +80,7 @@ module Travis
       Services.register
       Enqueue::Services.register
       Github::Services.register
+      Logs::Services.register
       Requests::Services.register
     end
 
