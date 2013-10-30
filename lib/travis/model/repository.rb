@@ -112,7 +112,7 @@ class Repository < Travis::Model
   end
 
   def source_host
-    url =~ %r(^https?://([^/]*)/) && $1
+    Travis.config.github.source_host || 'github.com'
   end
 
   def branches
