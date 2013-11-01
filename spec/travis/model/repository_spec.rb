@@ -196,10 +196,12 @@ describe Repository do
   end
 
   describe 'source_host' do
-    let(:repo) { Repository.new(url: 'https://github.com/travis-ci/travis-ci') }
+    before :each do
+      Travis.config.github.stubs(:source_host).returns('localhost')
+    end
 
-    it 'returns the host name from the repository url' do
-      repo.source_host.should == 'github.com'
+    it 'returns the source_host name from Travis.config' do
+      Repository.new.source_host.should == 'localhost'
     end
   end
 
