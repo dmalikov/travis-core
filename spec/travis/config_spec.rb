@@ -2,17 +2,17 @@ require 'spec_helper'
 require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
-  let(:config) { Travis::Config.new }
+  let(:config) { Travis::Config.load([:files, :env, :heroku]) }
 
-  before :each do
-    Travis::Config.instance_variable_set(:@load_files, nil)
-  end
+  # before :each do
+  #   Travis::Config.instance_variable_set(:@load_files, nil)
+  # end
 
   after :each do
     ENV.delete('DATABASE_URL')
     ENV.delete('travis_config')
-    Travis.instance_variable_set(:@config, nil)
-    Travis::Config.instance_variable_set(:@load_files, nil)
+    # Travis.instance_variable_set(:@config, nil)
+    # Travis::Config.instance_variable_set(:@load_files, nil)
   end
 
   describe 'Hashr behaviour' do
@@ -83,8 +83,6 @@ describe Travis::Config do
   end
 
   describe 'using DATABASE_URL for database configuration if present' do
-    before(:each) { Travis::Config.stubs(:load_files).returns({}) }
-
     it 'works when given a url with a port' do
       ENV['DATABASE_URL'] = 'postgres://username:password@hostname:port/database'
 
@@ -112,8 +110,7 @@ describe Travis::Config do
   end
 
   describe 'the example config file' do
-    let(:data)    { {} }
-    before(:each) { Travis::Config.stubs(:load_files).returns(data) }
+    let(:data) { {} }
 
     it 'can access pusher' do
       lambda { config.pusher.key }.should_not raise_error
@@ -133,7 +130,7 @@ describe Travis::Config do
   describe 'reads custom config files' do
     before :each do
       # TODO refactor Travis::Config so we don't use so many class methods, maybe extract to Travis::Config::Loader
-      Travis::Config.stubs(:filenames).returns ['config/travis.yml', 'config/travis/foo.yml', 'config/travis/bar.yml']
+      Dir.stubs(:[]).returns ['config/travis.yml', 'config/travis/foo.yml', 'config/travis/bar.yml']
       File.stubs(:file?).returns true
       YAML.stubs(:load_file).with('config/travis.yml').returns('test' => { 'travis' => 'travis', 'shared' => 'travis' })
       YAML.stubs(:load_file).with('config/travis/foo.yml').returns('test' => { 'foo' => 'foo' })
@@ -141,16 +138,16 @@ describe Travis::Config do
     end
 
     it 'still reads the default config file' do
-      Travis::Config.new.travis.should == 'travis'
+      config.travis.should == 'travis'
     end
 
     it 'merges custom files' do
-      Travis::Config.new.foo.should == 'foo'
-      Travis::Config.new.bar.should == 'bar'
+      config.foo.should == 'foo'
+      config.bar.should == 'bar'
     end
 
     it 'overwrites previously set values with values loaded later' do
-      Travis::Config.new.shared.should == 'bar'
+      config.shared.should == 'bar'
     end
   end
 

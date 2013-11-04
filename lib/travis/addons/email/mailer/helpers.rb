@@ -15,7 +15,7 @@ module Travis
           end
 
           def repository_build_url(options)
-            [Travis.config.http_host, options[:slug], 'builds', options[:id]].join('/')
+            ["https://#{Travis.config.host}", options[:slug], 'builds', options[:id]].join('/')
           end
 
           def title(repository)

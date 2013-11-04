@@ -72,7 +72,10 @@ module Travis
   class RepositoryMissing < StandardError; end
 
   class << self
-    def setup
+    def setup(options = {})
+      @config = Config.load(options[:configs] || [:files, :env, :heroku])
+      @redis = Travis::RedisPool.new(config.redis)
+
       Travis.logger.info('Setting up Travis::Core')
 
       Github.setup
@@ -84,15 +87,7 @@ module Travis
       Requests::Services.register
     end
 
-    attr_accessor :redis
-
-    def start
-      @redis = Travis::RedisPool.new(config.redis)
-    end
-
-    def config
-      @config ||= Config.new
-    end
+    attr_accessor :redis, :config
 
     def pusher
       @pusher ||= ::Pusher.tap do |pusher|
@@ -120,5 +115,4 @@ module Travis
   end
 
   setup
-  start
 end
