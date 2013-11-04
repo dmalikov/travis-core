@@ -56,8 +56,8 @@ describe Travis::Addons::GithubStatus::Task do
     it 'warns about a failed request' do
       GH.stubs(:post).raises(GH::Error.new(nil))
       run
-      io.string.should include('[task]')
       io.string.should include('Could not update')
+      io.string.should include('error:')
     end
   end
 end

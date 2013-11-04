@@ -2,20 +2,13 @@ require 'spec_helper'
 require 'active_support/core_ext/hash/slice'
 
 describe Travis::Config do
-  let(:config) { Travis::Config.load([:files, :env, :heroku]) }
-
-  # before :each do
-  #   Travis::Config.instance_variable_set(:@load_files, nil)
-  # end
-
-  after :each do
-    ENV.delete('DATABASE_URL')
-    ENV.delete('travis_config')
-    # Travis.instance_variable_set(:@config, nil)
-    # Travis::Config.instance_variable_set(:@load_files, nil)
-  end
+  let(:config) { Travis::Config.load([:files, :env, :heroku, :docker]) }
 
   describe 'Hashr behaviour' do
+    after :each do
+      ENV.delete('travis_config')
+    end
+
     it 'is a Hashr instance' do
       config.should be_kind_of(Hashr)
     end
@@ -83,6 +76,10 @@ describe Travis::Config do
   end
 
   describe 'using DATABASE_URL for database configuration if present' do
+    after :each do
+      ENV.delete('DATABASE_URL')
+    end
+
     it 'works when given a url with a port' do
       ENV['DATABASE_URL'] = 'postgres://username:password@hostname:port/database'
 
@@ -129,7 +126,6 @@ describe Travis::Config do
 
   describe 'reads custom config files' do
     before :each do
-      # TODO refactor Travis::Config so we don't use so many class methods, maybe extract to Travis::Config::Loader
       Dir.stubs(:[]).returns ['config/travis.yml', 'config/travis/foo.yml', 'config/travis/bar.yml']
       File.stubs(:file?).returns true
       YAML.stubs(:load_file).with('config/travis.yml').returns('test' => { 'travis' => 'travis', 'shared' => 'travis' })
@@ -148,6 +144,47 @@ describe Travis::Config do
 
     it 'overwrites previously set values with values loaded later' do
       config.shared.should == 'bar'
+    end
+  end
+
+  describe 'loads docker-style env vars' do
+    after :each do
+      %w(POSTGRESQL_PORT RABBITMQ_PORT REDIS_PORT).each do |key|
+        ENV.delete(key)
+      end
+    end
+
+    describe 'loads POSTGRESQL_PORT to config.database' do
+      before :each do
+        ENV['POSTGRESQL_PORT'] = 'tcp://172.17.0.11:5432'
+      end
+
+      it 'loads host and port from the env var' do
+        config.database.values_at(:host, :port).should == ['172.17.0.11', '5432']
+      end
+
+      it 'keeps adapter, database, encoding from the regular config' do
+        config.database.values_at(:adapter, :database, :encoding).should == ['postgresql', 'travis_test', 'unicode']
+      end
+    end
+
+    describe 'loads RABBITMQ_PORT to config.amqp' do
+      before :each do
+        ENV['RABBITMQ_PORT'] = 'tcp://172.17.0.11:5672'
+      end
+
+      it 'loads host and port from the env var' do
+        config.amqp.values_at(:host, :port).should == ['172.17.0.11', '5672']
+      end
+
+      it 'keeps username, password, prefetch from the regular config' do
+        config.amqp.values_at(:username, :password, :prefetch).should == ['guest', 'guest', 1]
+      end
+    end
+
+    it 'loads REDIS_PORT' do
+      ENV['REDIS_PORT'] = 'tcp://172.17.0.7:6379'
+      config.redis.should == { url: 'tcp://172.17.0.7:6379' }
     end
   end
 
