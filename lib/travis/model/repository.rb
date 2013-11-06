@@ -103,6 +103,10 @@ class Repository < Travis::Model
     @slug ||= [owner_name, name].join('/')
   end
 
+  def api_url
+    "#{Travis.config.github.api_url}/repos/#{slug}"
+  end
+
   def source_url
     (private? || private_mode?) ? "git@#{source_host}:#{slug}.git": "git://#{source_host}/#{slug}.git"
   end
