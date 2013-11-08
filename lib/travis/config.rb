@@ -74,7 +74,7 @@ module Travis
     default :_access => [:key]
 
     def update_periodically
-      Travis.info "[deprecated] Travis.config.update_periodically doesn't do anything anymore"
+      Travis.logger.info "[deprecated] Travis.config.update_periodically doesn't do anything anymore"
     end
   end
 end
