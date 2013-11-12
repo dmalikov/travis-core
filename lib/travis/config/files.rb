@@ -11,7 +11,7 @@ module Travis
       private
 
         def load_file(filename)
-          YAML.load_file(filename) if File.file?(filename) rescue {}
+          File.file?(filename) ? YAML.load_file(filename) : {} rescue {}
         end
 
         def filenames
