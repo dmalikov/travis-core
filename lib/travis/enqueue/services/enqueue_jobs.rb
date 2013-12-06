@@ -51,7 +51,7 @@ module Travis
 
           def publish(job)
             payload = Travis::Api.data(job, for: 'worker', type: 'Job::Test', version: 'v0')
-            publisher(job.queue).publish(payload, properties: { type: payload['type'] })
+            publisher(job.queue).publish(payload, properties: { type: payload['type'], persistent: true })
           end
 
           def jobs
