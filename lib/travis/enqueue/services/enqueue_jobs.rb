@@ -25,7 +25,7 @@ module Travis
           enqueue_all && reports unless disabled?
         end
         instrument :run
-        rescues :run, from: Exception
+        rescues :run, from: Exception, backtrace: false
 
         def disabled?
           Travis::Features.feature_deactivated?(:job_queueing)
